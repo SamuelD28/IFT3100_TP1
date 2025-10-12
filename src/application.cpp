@@ -1,4 +1,5 @@
 #include <application.hpp>
+#include <FreeImage.h>
 
 namespace application
 {
@@ -14,6 +15,8 @@ namespace application
 		// To be implemented
 	}
 
+	auto test = FreeImage_Load(FIF_JPEG, "/test");
+
 	GLFWwindow *setup(std::string name, unsigned int width, unsigned int height)
 	{
 		if (!glfwInit())
@@ -21,7 +24,6 @@ namespace application
 			return nullptr;
 		}
 
-		// Todo
 		// glfwSetErrorCallback(glfwErrorCallback);
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

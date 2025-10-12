@@ -1,4 +1,4 @@
-Repository for Lab 3 exercice for IFT-3100
+Repository for the first part of the semester project of IFT-3100
 
 COMMANDS
 
@@ -13,3 +13,9 @@ DEPENDENCIES
 - ninja 
 - cmake
 - glfw
+
+TO DO 
+- Figure out how to issue commands at runtime (console commands or ui components)
+- Pick structure for the project
+- Implement first three criterias for the image part
+- Look at whats the best way to package an application

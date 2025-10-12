@@ -14,6 +14,14 @@ target_link_libraries(app glad)
 find_package(glfw3 REQUIRED CONFIG)
 target_link_libraries(app glfw)
 
+# For prebuilt dll
+add_library(FreeImage IMPORTED SHARED)
+set_target_properties(FreeImage PROPERTIES
+    IMPORTED_LOCATION "${CMAKE_INSTALL_PREFIX}/bin/FreeImage.dll" # Optional: Specify DLL location for runtime
+    IMPORTED_IMPLIB "${CMAKE_INSTALL_PREFIX}/lib/FreeImage.lib" # Required: Path to the import library
+)
+target_link_libraries(app FreeImage)
+
 file(COPY ${CMAKE_SOURCE_DIR}/bin DESTINATION ${CMAKE_BINARY_DIR})
 
 target_sources(app PRIVATE 
