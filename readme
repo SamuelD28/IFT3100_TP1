@@ -1,0 +1,15 @@
+Repository for Lab 3 exercice for IFT-3100
+
+COMMANDS
+
+setup: export DISPLAY=:0.0 && startxwin &
+clean: rm -rf build && 
+build: cmake . -B build -G "Ninja"
+compile: ninja -C build 
+exec: ./build/app.exe
+deploy: rm -rf build && cmake . -B build -G "Ninja" && ninja -C build && ./build/app.exe
+
+DEPENDENCIES
+- ninja 
+- cmake
+- glfw
