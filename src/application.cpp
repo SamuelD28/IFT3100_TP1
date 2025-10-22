@@ -1,5 +1,4 @@
 #include <application.hpp>
-#include <FreeImage.h>
 
 namespace application
 {
@@ -12,10 +11,7 @@ namespace application
 	bool start()
 	{
 		return true;
-		// To be implemented
 	}
-
-	auto test = FreeImage_Load(FIF_JPEG, "/test");
 
 	GLFWwindow *setup(std::string name, unsigned int width, unsigned int height)
 	{
