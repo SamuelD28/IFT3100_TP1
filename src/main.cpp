@@ -85,35 +85,34 @@ std::ostream &operator<<(std::ostream &os, const ConsoleCommand command)
 
 class Command
 {
+public:
+	virtual Command *clone() = 0;
 
 public:
-	Command() {}
+	virtual bool exec(const Context *context) = 0;
 
 public:
-	virtual bool from(ConsoleCommand command) = 0;
-
-public:
-	virtual bool exec(Context context) = 0;
-
-public:
-	virtual bool revert(Context context) = 0;
+	virtual bool revert(const Context *context) = 0;
 };
 
 class QuitCommand : public Command
 {
 public:
-	bool from(ConsoleCommand command)
+	Command *clone() override
 	{
+		return new QuitCommand(*this);
 	}
 
 public:
-	bool exec(Context context)
+	bool exec(const Context *context)
 	{
+		return true;
 	}
 
 public:
-	bool revert(Context context)
+	bool revert(const Context *context)
 	{
+		return true;
 	}
 };
 
@@ -121,6 +120,12 @@ class LoadCommand : public Command
 {
 public:
 	std::string path{};
+
+public:
+	Command *clone() override
+	{
+		return new LoadCommand(*this);
+	}
 
 public:
 	bool from(ConsoleCommand command)
@@ -132,58 +137,75 @@ public:
 		}
 
 		path = command.arguments.at(0);
+		return true;
 	}
 
 public:
-	bool from(std::string path)
+	bool exec(const Context *context) override
 	{
-		path = path;
+		std::ifstream file(path);
+
+		if (file.is_open())
+		{
+			std::cout << "file open \n";
+			return false;
+		}
+		else
+		{
+			std::cout << "file is not open \n";
+		}
+
+		file.close();
+		return true;
 	}
 
 public:
-	bool exec(Context context)
+	bool revert(const Context *context) override
 	{
-	}
-
-public:
-	bool revert(Context context)
-	{
+		return true;
 	}
 };
 
 class SnapCommand : public Command
 {
+
 public:
-	bool from(ConsoleCommand command)
+	Command *clone() override
 	{
+		return new SnapCommand(*this);
 	}
 
 public:
-	bool exec(Context context)
+	bool exec(const Context *context)
 	{
+		return true;
 	}
 
 public:
-	bool revert(Context context)
+	bool revert(const Context *context)
 	{
+		return true;
 	}
 };
 
 class PaletteCommand : public Command
 {
 public:
-	bool from(ConsoleCommand command)
+	Command *clone() override
 	{
+		return new PaletteCommand(*this);
 	}
 
 public:
-	bool exec(Context context)
+	bool exec(const Context *context)
 	{
+		return true;
 	}
 
 public:
-	bool revert(Context context)
+	bool revert(const Context *context)
 	{
+		return true;
 	}
 };
 
@@ -209,11 +231,11 @@ int main(int argc, char *argv[])
 	// 	return -1;
 	// }
 
-	std::map<std::string, Command> commands{
-			{"quit", QuitCommand()},
-			{"load", LoadCommand()},
-			{"snap", SnapCommand()},
-			{"palette", PaletteCommand()},
+	std::map<std::string, Command *> commands{
+			{"quit", QuitCommand{}.clone()},
+			{"load", LoadCommand{}.clone()},
+			// {"snap", SnapCommand()},
+			// {"palette", PaletteCommand()},
 	};
 
 	for (;;)
@@ -234,6 +256,9 @@ int main(int argc, char *argv[])
 			std::cout << "[ERROR] No command of name:" << consoleCommand.name << " found\n";
 			continue;
 		}
+
+		// auto command = commands[consoleCommand.name];
+		// command.exec(&context);
 	}
 
 	return 0;
