@@ -4,7 +4,7 @@
 #include <vector>
 
 const char *COMMAND_SEPARATOR = ":";
-const char *ARGUMENT_SEPARATOR = ",";
+const char *ARGUMENT_SEPARATOR = "|";
 
 struct ConsoleCommand
 {
@@ -15,21 +15,51 @@ struct ConsoleCommand
 	void parse(std::string input)
 	{
 		auto separatorIndex = input.find(":");
-
 		if (separatorIndex == 0)
 		{
 			valid = false;
+			return;
 		}
 
-		auto test = input.substr(0, separatorIndex - 1);
-		auto argumentsInput = input.substr(separatorIndex + 1, input.length());
+		name = input.substr(0, separatorIndex);
 
-		std::cout << test << "\n";
-		std::cout << argumentsInput << "\n";
+		unsigned int argumentStartIndex = separatorIndex + 1;
+		for (int argumentEndIndex = separatorIndex + 1; argumentEndIndex < input.length(); argumentEndIndex++)
+		{
+			auto currentChar = input[argumentEndIndex];
+
+			// Weve reach the end, substr is built a bit different
+			if (argumentEndIndex == input.length() - 1)
+			{
+				auto argument = input.substr(argumentStartIndex, argumentEndIndex + 1 - argumentStartIndex);
+				arguments.push_back(argument);
+			}
+
+			if (currentChar == *ARGUMENT_SEPARATOR)
+			{
+				auto argument = input.substr(argumentStartIndex, argumentEndIndex - argumentStartIndex);
+				arguments.push_back(argument);
+				argumentStartIndex = argumentEndIndex + 1;
+			}
+		}
 
 		valid = true;
 	}
 };
+
+std::ostream &operator<<(std::ostream &os, const ConsoleCommand command)
+{
+	std::string output = "name => " + command.name + ", valid => " + (command.valid ? "true" : "false");
+
+	for (int i = 0; i < command.arguments.size(); i++)
+	{
+		auto argument = command.arguments[i];
+		output += ", argument-" + std::to_string(i) + " => " + argument;
+	}
+
+	os << output << "\n";
+	return os;
+}
 
 /**
  * Console process to parse commands
@@ -60,6 +90,7 @@ int main(int argc, char *argv[])
 		std::string input = "";
 		std::cin >> input;
 		command.parse(input);
+		std::cout << command << "\n";
 	}
 
 	return 0;
