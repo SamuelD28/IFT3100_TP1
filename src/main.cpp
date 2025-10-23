@@ -1,28 +1,48 @@
 #include <iostream>
-#include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <map>
+
+struct Resource
+{
+public:
+	int id{};
+
+public:
+	std::string type{};
+
+public:
+	std::string path{};
+};
+
+class Context
+{
+public:
+	std::vector<Resource> resources{};
+};
 
 const char *COMMAND_SEPARATOR = ":";
 const char *ARGUMENT_SEPARATOR = "|";
 
 struct ConsoleCommand
 {
-	bool valid{};
-	std::string name{};
+	bool valid{false};
+	std::string name{""};
 	std::vector<std::string> arguments{};
 
-	void parse(std::string input)
+	static ConsoleCommand build(std::string input)
 	{
+		auto command = ConsoleCommand{};
+
 		auto separatorIndex = input.find(":");
-		if (separatorIndex == 0)
+		if (separatorIndex == SIZE_MAX)
 		{
-			valid = false;
-			return;
+			command.valid = false;
+			return command;
 		}
 
-		name = input.substr(0, separatorIndex);
+		command.name = input.substr(0, separatorIndex);
 
 		unsigned int argumentStartIndex = separatorIndex + 1;
 		for (int argumentEndIndex = separatorIndex + 1; argumentEndIndex < input.length(); argumentEndIndex++)
@@ -33,24 +53,25 @@ struct ConsoleCommand
 			if (argumentEndIndex == input.length() - 1)
 			{
 				auto argument = input.substr(argumentStartIndex, argumentEndIndex + 1 - argumentStartIndex);
-				arguments.push_back(argument);
+				command.arguments.push_back(argument);
 			}
 
 			if (currentChar == *ARGUMENT_SEPARATOR)
 			{
 				auto argument = input.substr(argumentStartIndex, argumentEndIndex - argumentStartIndex);
-				arguments.push_back(argument);
+				command.arguments.push_back(argument);
 				argumentStartIndex = argumentEndIndex + 1;
 			}
 		}
 
-		valid = true;
+		command.valid = true;
+		return command;
 	}
 };
 
 std::ostream &operator<<(std::ostream &os, const ConsoleCommand command)
 {
-	std::string output = "[CONSOLE COMMAND] name => " + command.name + ", valid => " + (command.valid ? "true" : "false");
+	std::string output = "[COMMAND] name => " + command.name + ", valid => " + (command.valid ? "true" : "false");
 
 	for (int i = 0; i < command.arguments.size(); i++)
 	{
@@ -64,14 +85,106 @@ std::ostream &operator<<(std::ostream &os, const ConsoleCommand command)
 
 class Command
 {
+
 public:
-	Command()
+	Command() {}
+
+public:
+	virtual bool from(ConsoleCommand command) = 0;
+
+public:
+	virtual bool exec(Context context) = 0;
+
+public:
+	virtual bool revert(Context context) = 0;
+};
+
+class QuitCommand : public Command
+{
+public:
+	bool from(ConsoleCommand command)
+	{
+	}
+
+public:
+	bool exec(Context context)
+	{
+	}
+
+public:
+	bool revert(Context context)
 	{
 	}
 };
 
-class CommandQuit : public Command
+class LoadCommand : public Command
 {
+public:
+	std::string path{};
+
+public:
+	bool from(ConsoleCommand command)
+	{
+		// assertions
+		if (command.arguments.size() != 1)
+		{
+			return false;
+		}
+
+		path = command.arguments.at(0);
+	}
+
+public:
+	bool from(std::string path)
+	{
+		path = path;
+	}
+
+public:
+	bool exec(Context context)
+	{
+	}
+
+public:
+	bool revert(Context context)
+	{
+	}
+};
+
+class SnapCommand : public Command
+{
+public:
+	bool from(ConsoleCommand command)
+	{
+	}
+
+public:
+	bool exec(Context context)
+	{
+	}
+
+public:
+	bool revert(Context context)
+	{
+	}
+};
+
+class PaletteCommand : public Command
+{
+public:
+	bool from(ConsoleCommand command)
+	{
+	}
+
+public:
+	bool exec(Context context)
+	{
+	}
+
+public:
+	bool revert(Context context)
+	{
+	}
 };
 
 /**
@@ -97,27 +210,28 @@ int main(int argc, char *argv[])
 	// }
 
 	std::map<std::string, Command> commands{
-			{"quit", CommandQuit()},
+			{"quit", QuitCommand()},
+			{"load", LoadCommand()},
+			{"snap", SnapCommand()},
+			{"palette", PaletteCommand()},
 	};
-
-	auto consoleCommand = ConsoleCommand{};
 
 	for (;;)
 	{
 		std::string input = "";
 		std::cin >> input;
-		consoleCommand.parse(input);
+		auto consoleCommand = ConsoleCommand{}.build(input);
 		std::cout << consoleCommand;
 
 		if (!consoleCommand.valid)
 		{
-			std::cout << "Command is invalid, verify input\n";
+			std::cout << "[ERROR] Command is invalid, verify input\n";
 			continue;
 		}
 
 		if (!commands.contains(consoleCommand.name))
 		{
-			std::cout << "No command of name:" << consoleCommand.name << " found\n";
+			std::cout << "[ERROR] No command of name:" << consoleCommand.name << " found\n";
 			continue;
 		}
 	}
