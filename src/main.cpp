@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 const char *COMMAND_SEPARATOR = ":";
 const char *ARGUMENT_SEPARATOR = "|";
@@ -49,7 +50,7 @@ struct ConsoleCommand
 
 std::ostream &operator<<(std::ostream &os, const ConsoleCommand command)
 {
-	std::string output = "name => " + command.name + ", valid => " + (command.valid ? "true" : "false");
+	std::string output = "[CONSOLE COMMAND] name => " + command.name + ", valid => " + (command.valid ? "true" : "false");
 
 	for (int i = 0; i < command.arguments.size(); i++)
 	{
@@ -60,6 +61,18 @@ std::ostream &operator<<(std::ostream &os, const ConsoleCommand command)
 	os << output << "\n";
 	return os;
 }
+
+class Command
+{
+public:
+	Command()
+	{
+	}
+};
+
+class CommandQuit : public Command
+{
+};
 
 /**
  * Console process to parse commands
@@ -83,14 +96,30 @@ int main(int argc, char *argv[])
 	// 	return -1;
 	// }
 
-	auto command = ConsoleCommand{};
+	std::map<std::string, Command> commands{
+			{"quit", CommandQuit()},
+	};
 
-	while (!command.valid)
+	auto consoleCommand = ConsoleCommand{};
+
+	for (;;)
 	{
 		std::string input = "";
 		std::cin >> input;
-		command.parse(input);
-		std::cout << command << "\n";
+		consoleCommand.parse(input);
+		std::cout << consoleCommand;
+
+		if (!consoleCommand.valid)
+		{
+			std::cout << "Command is invalid, verify input\n";
+			continue;
+		}
+
+		if (!commands.contains(consoleCommand.name))
+		{
+			std::cout << "No command of name:" << consoleCommand.name << " found\n";
+			continue;
+		}
 	}
 
 	return 0;
