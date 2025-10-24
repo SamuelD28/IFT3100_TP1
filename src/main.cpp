@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
 	for (;;)
 	{
 		std::string input = "";
-		std::cin >> input;
+		std::getline(std::cin, input);
 		auto consoleCommand = ConsoleCommand::bind(input);
 		std::cout << consoleCommand;
 
