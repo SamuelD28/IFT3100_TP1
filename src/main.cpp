@@ -127,7 +127,7 @@ public:
 		// assertions
 		if (command.arguments.size() != 1)
 		{
-			return false;
+			return nullptr;
 		}
 
 		loadCommand->path = command.arguments.at(0);
@@ -164,6 +164,12 @@ class SnapCommand : public Command
 {
 
 public:
+	static Command *build(ConsoleCommand command)
+	{
+		return new SnapCommand();
+	}
+
+public:
 	bool exec(const Context *context)
 	{
 		return true;
@@ -178,6 +184,11 @@ public:
 
 class PaletteCommand : public Command
 {
+public:
+	static Command *build(ConsoleCommand command)
+	{
+		return new PaletteCommand();
+	}
 
 public:
 	bool exec(const Context *context)
@@ -218,9 +229,9 @@ int main(int argc, char *argv[])
 	// just create a builder function
 	std::map<std::string, std::function<Command *(ConsoleCommand)>> commandsBuilder{
 			{"quit", QuitCommand::build},
-			// {"load", LoadCommand{}},
-			// {"snap", SnapCommand{}},
-			// {"palette", PaletteCommand{}},
+			{"load", LoadCommand::build},
+			{"snap", SnapCommand::build},
+			{"palette", PaletteCommand::build},
 	};
 
 	const Context context{};
