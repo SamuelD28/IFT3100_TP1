@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <filesystem>
+#include <random>
 
 namespace command
 {
@@ -23,6 +25,26 @@ namespace command
 
 	public:
 		virtual bool revert(Context *context) = 0;
+	};
+
+	class QuitCommand : public Command
+	{
+		static Command *build(command::TextCommand command);
+	};
+
+	class SnapCommand : public Command
+	{
+		static Command *build(command::TextCommand command);
+	};
+
+	class PaletteCommand : public Command
+	{
+		static Command *build(command::TextCommand command);
+	};
+
+	class LoadCommand : public Command
+	{
+		static Command *build(command::TextCommand command);
 	};
 };
 

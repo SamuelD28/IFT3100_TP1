@@ -7,25 +7,6 @@ namespace application
 	// 	std::cout << "\nAn error occured. errorCode =" << errorCode << " description: " << *description << std::endl;
 	// }
 
-	class Context
-	{
-	public:
-		std::vector<Resource> resources{};
-	};
-
-	std::ostream &operator<<(std::ostream &os, const Context *context)
-	{
-		std::string output = "";
-
-		for (auto resource : context->resources)
-		{
-			output += "[RESOURCE] id => " + std::to_string(resource.id) + " type => " + resource.type + "\n";
-		}
-
-		os << output << "\n";
-		return os;
-	}
-
 	bool start()
 	{
 		return true;
