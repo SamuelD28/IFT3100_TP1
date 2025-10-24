@@ -4,6 +4,9 @@
 #include <vector>
 #include <map>
 #include <functional>
+#include <filesystem>
+#include <iostream>
+#include <random>
 
 struct Resource
 {
@@ -22,6 +25,19 @@ class Context
 public:
 	std::vector<Resource> resources{};
 };
+
+std::ostream &operator<<(std::ostream &os, const Context *context)
+{
+	std::string output = "";
+
+	for (auto resource : context->resources)
+	{
+		output += "[RESOURCE] id => " + std::to_string(resource.id) + " type => " + resource.type + "\n";
+	}
+
+	os << output << "\n";
+	return os;
+}
 
 const char *COMMAND_SEPARATOR = ":";
 const char *ARGUMENT_SEPARATOR = "|";
@@ -87,10 +103,10 @@ std::ostream &operator<<(std::ostream &os, const ConsoleCommand command)
 class Command
 {
 public:
-	virtual bool exec(const Context *context) = 0;
+	virtual bool exec(Context *context) = 0;
 
 public:
-	virtual bool revert(const Context *context) = 0;
+	virtual bool revert(Context *context) = 0;
 };
 
 class QuitCommand : public Command
@@ -102,14 +118,14 @@ public:
 	};
 
 public:
-	bool exec(const Context *context)
+	bool exec(Context *context)
 	{
 		std::cout << "quit command" << "\n";
 		return true;
 	}
 
 public:
-	bool revert(const Context *context)
+	bool revert(Context *context)
 	{
 		return true;
 	}
@@ -119,6 +135,8 @@ class LoadCommand : public Command
 {
 public:
 	std::string path{};
+
+	const std::string resourcesDirectoryPath = "resources";
 
 public:
 	static Command *build(ConsoleCommand command)
@@ -135,26 +153,67 @@ public:
 	}
 
 public:
-	bool exec(const Context *context) override
+	bool exec(Context *context) override
 	{
-		std::ifstream file(path);
-
-		if (file.is_open())
+		if (!std::filesystem::exists(path))
 		{
-			std::cout << "[LOAD COMMAND] file open \n";
+			std::cout << "[LOAD COMMAND] file is not open \n";
 			return false;
+		}
+
+		std::string filename = "";
+		const size_t lastSlashIndex = path.find_last_of("\\");
+		if (lastSlashIndex != SIZE_MAX)
+		{
+			filename = path.substr(lastSlashIndex + 1);
 		}
 		else
 		{
-			std::cout << "[LOAD COMMAND] file is not open \n";
+			filename = path;
 		}
 
-		file.close();
+		std::cout << "[LOAD COMMAND] file name: " << filename << "\n";
+
+		if (!std::filesystem::exists(resourcesDirectoryPath))
+		{
+			if (!std::filesystem::create_directory(resourcesDirectoryPath))
+			{
+				std::cout << "[LOAD COMMAND] could not create resource directory \n";
+				return false;
+			}
+			std::cout << "[LOAD COMMAND] created directory:" << resourcesDirectoryPath << "\n";
+		}
+
+		const std::string destinationPath = resourcesDirectoryPath + "\\" + filename;
+		if (std::filesystem::exists(destinationPath))
+		{
+			std::cout << "[LOAD COMMAND] file already exist at: " << destinationPath << "\n";
+			return false;
+		}
+
+		if (std::filesystem::copy_file(path, destinationPath))
+		{
+			std::cout << "[LOAD COMMAND] copied file from:" << path << " to:" << destinationPath << "\n";
+		}
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> distrib(1, INT32_MAX);
+		int randomNumber = distrib(gen);
+
+		Resource resource{
+				randomNumber,
+				"image",
+				destinationPath,
+		};
+
+		context->resources.push_back(resource);
+
 		return true;
 	}
 
 public:
-	bool revert(const Context *context) override
+	bool revert(Context *context) override
 	{
 		return true;
 	}
@@ -170,13 +229,13 @@ public:
 	}
 
 public:
-	bool exec(const Context *context)
+	bool exec(Context *context)
 	{
 		return true;
 	}
 
 public:
-	bool revert(const Context *context)
+	bool revert(Context *context)
 	{
 		return true;
 	}
@@ -191,13 +250,13 @@ public:
 	}
 
 public:
-	bool exec(const Context *context)
+	bool exec(Context *context)
 	{
 		return true;
 	}
 
 public:
-	bool revert(const Context *context)
+	bool revert(Context *context)
 	{
 		return true;
 	}
@@ -234,7 +293,7 @@ int main(int argc, char *argv[])
 			{"palette", PaletteCommand::build},
 	};
 
-	const Context context{};
+	Context context{};
 
 	for (;;)
 	{
@@ -257,6 +316,7 @@ int main(int argc, char *argv[])
 
 		auto command = commandsBuilder[consoleCommand.name](consoleCommand);
 		command->exec(&context);
+		std::cout << &context;
 	}
 
 	return 0;
