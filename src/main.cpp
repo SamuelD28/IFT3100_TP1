@@ -297,6 +297,7 @@ int main(int argc, char *argv[])
 
 	for (;;)
 	{
+		std::cin.clear();
 		std::string input = "";
 		std::getline(std::cin, input);
 		auto consoleCommand = ConsoleCommand::bind(input);
