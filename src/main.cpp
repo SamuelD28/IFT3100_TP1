@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <functional>
 
 struct Resource
 {
@@ -31,7 +32,7 @@ struct ConsoleCommand
 	std::string name{""};
 	std::vector<std::string> arguments{};
 
-	static ConsoleCommand build(std::string input)
+	static ConsoleCommand bind(std::string input)
 	{
 		auto command = ConsoleCommand{};
 
@@ -86,9 +87,6 @@ std::ostream &operator<<(std::ostream &os, const ConsoleCommand command)
 class Command
 {
 public:
-	virtual Command *clone() = 0;
-
-public:
 	virtual bool exec(const Context *context) = 0;
 
 public:
@@ -98,14 +96,15 @@ public:
 class QuitCommand : public Command
 {
 public:
-	Command *clone() override
+	static Command *build(ConsoleCommand command)
 	{
-		return new QuitCommand(*this);
-	}
+		return new QuitCommand();
+	};
 
 public:
 	bool exec(const Context *context)
 	{
+		std::cout << "quit command" << "\n";
 		return true;
 	}
 
@@ -122,22 +121,17 @@ public:
 	std::string path{};
 
 public:
-	Command *clone() override
+	static Command *build(ConsoleCommand command)
 	{
-		return new LoadCommand(*this);
-	}
-
-public:
-	bool from(ConsoleCommand command)
-	{
+		auto loadCommand = new LoadCommand();
 		// assertions
 		if (command.arguments.size() != 1)
 		{
 			return false;
 		}
 
-		path = command.arguments.at(0);
-		return true;
+		loadCommand->path = command.arguments.at(0);
+		return loadCommand;
 	}
 
 public:
@@ -147,12 +141,12 @@ public:
 
 		if (file.is_open())
 		{
-			std::cout << "file open \n";
+			std::cout << "[LOAD COMMAND] file open \n";
 			return false;
 		}
 		else
 		{
-			std::cout << "file is not open \n";
+			std::cout << "[LOAD COMMAND] file is not open \n";
 		}
 
 		file.close();
@@ -170,12 +164,6 @@ class SnapCommand : public Command
 {
 
 public:
-	Command *clone() override
-	{
-		return new SnapCommand(*this);
-	}
-
-public:
 	bool exec(const Context *context)
 	{
 		return true;
@@ -190,11 +178,6 @@ public:
 
 class PaletteCommand : public Command
 {
-public:
-	Command *clone() override
-	{
-		return new PaletteCommand(*this);
-	}
 
 public:
 	bool exec(const Context *context)
@@ -231,18 +214,22 @@ int main(int argc, char *argv[])
 	// 	return -1;
 	// }
 
-	std::map<std::string, Command *> commands{
-			{"quit", QuitCommand{}.clone()},
-			{"load", LoadCommand{}.clone()},
-			// {"snap", SnapCommand()},
-			// {"palette", PaletteCommand()},
+	// Avoid this abstraction construction and rather
+	// just create a builder function
+	std::map<std::string, std::function<Command *(ConsoleCommand)>> commandsBuilder{
+			{"quit", QuitCommand::build},
+			// {"load", LoadCommand{}},
+			// {"snap", SnapCommand{}},
+			// {"palette", PaletteCommand{}},
 	};
+
+	const Context context{};
 
 	for (;;)
 	{
 		std::string input = "";
 		std::cin >> input;
-		auto consoleCommand = ConsoleCommand{}.build(input);
+		auto consoleCommand = ConsoleCommand::bind(input);
 		std::cout << consoleCommand;
 
 		if (!consoleCommand.valid)
@@ -251,14 +238,14 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		if (!commands.contains(consoleCommand.name))
+		if (!commandsBuilder.contains(consoleCommand.name))
 		{
 			std::cout << "[ERROR] No command of name:" << consoleCommand.name << " found\n";
 			continue;
 		}
 
-		// auto command = commands[consoleCommand.name];
-		// command.exec(&context);
+		auto command = commandsBuilder[consoleCommand.name](consoleCommand);
+		command->exec(&context);
 	}
 
 	return 0;
