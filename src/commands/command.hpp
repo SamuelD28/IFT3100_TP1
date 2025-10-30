@@ -11,18 +11,13 @@ namespace command
 {
 	struct Resource
 	{
-	public:
 		int id{};
-
-	public:
 		std::string type{};
-
-	public:
 		std::string path{};
 	};
-	class Context
+
+	struct Context
 	{
-	public:
 		std::vector<Resource> resources{};
 	};
 
@@ -48,37 +43,35 @@ namespace command
 
 	TextCommand from(std::string input);
 
-	typedef Command *build(TextCommand);
-
-	class Command
+	struct ICommand
 	{
-	public:
-		virtual bool exec(Context *context) = 0;
-
-	public:
-		virtual bool revert(Context *context) = 0;
+		virtual bool exec(Context *) const = 0;
+		virtual bool revert(Context *) const = 0;
+		virtual bool bind(TextCommand) const = 0;
 	};
 
-	class QuitCommand : public Command
+	struct LoadCommand : public ICommand
 	{
-		static Command *build(command::TextCommand command);
-	};
-
-	class SnapCommand : public Command
-	{
-		static Command *build(command::TextCommand command);
-	};
-
-	class PaletteCommand : public Command
-	{
-		static Command *build(command::TextCommand command);
-	};
-
-	class LoadCommand : public Command
-	{
-	public:
 		std::string path{};
-
-		static Command *build(command::TextCommand command);
+		bool exec(Context *) const override;
+		bool revert(Context *) const override;
+		bool bind(TextCommand) const override;
 	};
+
+	// struct QuitCommand
+	// {
+	// };
+
+	// struct SnapCommand
+	// {
+	// };
+
+	// struct PaletteCommand
+	// {
+	// };
+
+	// const std::map<std::string, > commands{
+	// 		{"load", LoadCommand::build},
+	// };
+
 };

@@ -1,21 +1,17 @@
-	class QuitCommand : public Command
-	{
-	public:
-		static Command *build(ConsoleCommand command)
-		{
-			return new QuitCommand();
-		};
+// #include <commands/command.hpp>
 
-	public:
-		bool exec(Context *context)
-		{
-			std::cout << "quit command" << "\n";
-			return true;
-		}
+// command::Command *command::QuitCommand::build(command::TextCommand command)
+// {
+// 	return new QuitCommand();
+// };
 
-	public:
-		bool revert(Context *context)
-		{
-			return true;
-		}
-	};
+// bool command::QuitCommand::exec(command::Context *context)
+// {
+// 	std::cout << "quit command" << "\n";
+// 	return true;
+// }
+
+// bool revert(Context *context)
+// {
+// 	return true;
+// }

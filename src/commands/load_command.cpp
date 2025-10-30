@@ -2,21 +2,27 @@
 
 const std::string resourcesDirectoryPath = "resources";
 
-command::Command *command::LoadCommand::build(command::TextCommand command)
+bool command::LoadCommand::bind(command::TextCommand command)
 {
-	auto loadCommand = new command::LoadCommand();
-	// assertions
-	if (command.arguments.size() != 1)
-	{
-		return nullptr;
-	}
+	return true;
+	// auto loadCommand = command::LoadCommand();
+	// if (command.arguments.size() != 1)
+	// {
+	// 	return loadCommand;
+	// }
 
-	loadCommand->path = command.arguments.at(0);
-	return loadCommand;
+	// loadCommand.path = command.arguments.at(0);
+	// return loadCommand;
 };
 
-bool command::LoadCommand::exec(command::Context *context) override
+bool command::LoadCommand::revert(command::Context *context)
 {
+	return true;
+};
+
+bool command::LoadCommand::exec(command::Context *context) const
+{
+	std::cout << "exec command \n";
 	// if (!std::filesystem::exists(path))
 	// {
 	// 	std::cout << "[LOAD COMMAND] file is not open \n";
@@ -72,9 +78,4 @@ bool command::LoadCommand::exec(command::Context *context) override
 	// // context->resources.push_back(resource);
 
 	// return true;
-};
-
-bool command::LoadCommand::revert(Context *context) override
-{
-	return true;
 };

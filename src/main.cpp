@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <iostream>
 #include <random>
+#include <commands/command.hpp>
 
 /**
  * Console process to parse commands
@@ -30,24 +31,15 @@ int main(int argc, char *argv[])
 	// 	return -1;
 	// }
 
-	// Avoid this abstraction construction and rather
-	// just create a builder function
-	std::map<std::string, std::function<Command *(ConsoleCommand)>> commandsBuilder{
-			{"quit", QuitCommand::build},
-			{"load", LoadCommand::build},
-			{"snap", SnapCommand::build},
-			{"palette", PaletteCommand::build},
-	};
-
-	Context context{};
+	command::Context context{};
 
 	for (;;)
 	{
 		std::cin.clear();
 		std::string input = "";
 		std::getline(std::cin, input);
-		auto consoleCommand = ConsoleCommand::bind(input);
-		std::cout << consoleCommand;
+		auto consoleCommand = command::from(input);
+		// std::cout << consoleCommand;
 
 		if (!consoleCommand.valid)
 		{
@@ -55,14 +47,13 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		if (!commandsBuilder.contains(consoleCommand.name))
+		if (!command::commandsBuilder.contains(consoleCommand.name))
 		{
 			std::cout << "[ERROR] No command of name:" << consoleCommand.name << " found\n";
 			continue;
 		}
 
-		auto command = commandsBuilder[consoleCommand.name](consoleCommand);
-		command->exec(&context);
+		auto command = command::commandsBuilder[consoleCommand.name](consoleCommand);
 		std::cout << &context;
 	}
 
