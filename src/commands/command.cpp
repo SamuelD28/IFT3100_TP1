@@ -81,6 +81,7 @@ command::ICommand *command::build(command::TextCommand textCommand)
 	auto command = COMMANDS.at(textCommand.name);
 	if (!command->bind(textCommand))
 	{
+		std::cout << "Doenst bind \n";
 		return nullptr;
 	}
 

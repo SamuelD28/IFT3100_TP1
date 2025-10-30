@@ -62,9 +62,4 @@ namespace command
 	// struct PaletteCommand
 	// {
 	// };
-
-	// const std::map<std::string, > commands{
-	// 		{"load", LoadCommand::build},
-	// };
-
 };
