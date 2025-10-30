@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <random>
 #include <functional>
+#include <map>
 
 namespace command
 {
@@ -47,15 +48,17 @@ namespace command
 	{
 		virtual bool exec(Context *) const = 0;
 		virtual bool revert(Context *) const = 0;
-		virtual bool bind(TextCommand) const = 0;
+		virtual bool bind(TextCommand) = 0;
 	};
+
+	ICommand *build(TextCommand);
 
 	struct LoadCommand : public ICommand
 	{
 		std::string path{};
 		bool exec(Context *) const override;
 		bool revert(Context *) const override;
-		bool bind(TextCommand) const override;
+		bool bind(TextCommand) override;
 	};
 
 	// struct QuitCommand

@@ -4,19 +4,18 @@ const std::string resourcesDirectoryPath = "resources";
 
 bool command::LoadCommand::bind(command::TextCommand command)
 {
-	return true;
-	// auto loadCommand = command::LoadCommand();
-	// if (command.arguments.size() != 1)
-	// {
-	// 	return loadCommand;
-	// }
+	if (command.arguments.size() != 1)
+	{
+		return false;
+	}
 
-	// loadCommand.path = command.arguments.at(0);
-	// return loadCommand;
+	this->path = command.arguments.at(0);
+	return true;
 };
 
-bool command::LoadCommand::revert(command::Context *context)
+bool command::LoadCommand::revert(command::Context *context) const
 {
+	std::cout << "revert command \n";
 	return true;
 };
 

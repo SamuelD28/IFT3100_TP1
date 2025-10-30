@@ -38,22 +38,27 @@ int main(int argc, char *argv[])
 		std::cin.clear();
 		std::string input = "";
 		std::getline(std::cin, input);
-		auto consoleCommand = command::from(input);
+		auto textCommand = command::from(input);
 		// std::cout << consoleCommand;
 
-		if (!consoleCommand.valid)
+		if (!textCommand.valid)
+		{
+			std::cout << "[ERROR] Text command is invalid, verify input\n";
+			continue;
+		}
+
+		auto command = command::build(textCommand);
+		if (command == nullptr)
 		{
 			std::cout << "[ERROR] Command is invalid, verify input\n";
 			continue;
 		}
 
-		if (!command::commandsBuilder.contains(consoleCommand.name))
+		if (!command->exec(&context))
 		{
-			std::cout << "[ERROR] No command of name:" << consoleCommand.name << " found\n";
+			std::cout << "[ERROR] Could not execute command, verify input\n";
 			continue;
 		}
-
-		auto command = command::commandsBuilder[consoleCommand.name](consoleCommand);
 		std::cout << &context;
 	}
 

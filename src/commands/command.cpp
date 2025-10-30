@@ -53,3 +53,23 @@ std::ostream &operator<<(std::ostream &os, const command::TextCommand command)
 	os << output << "\n";
 	return os;
 }
+
+const std::map<std::string, command::ICommand *> COMMANDS{
+		{"load", new command::LoadCommand()},
+};
+
+command::ICommand *command::build(command::TextCommand textCommand)
+{
+	if (!COMMANDS.contains(textCommand.name))
+	{
+		return nullptr;
+	}
+
+	auto command = COMMANDS.at(textCommand.name);
+	if (!command->bind(textCommand))
+	{
+		return nullptr;
+	}
+	
+	return command;
+}
