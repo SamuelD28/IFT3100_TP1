@@ -54,19 +54,6 @@ std::ostream &command::operator<<(std::ostream &os, const command::TextCommand c
 	return os;
 }
 
-std::ostream &command::operator<<(std::ostream &os, const command::Context *context)
-{
-	std::string output = "";
-
-	for (auto resource : context->resources)
-	{
-		output += "[RESOURCE] id => " + std::to_string(resource.id) + " type => " + resource.type + "\n";
-	}
-
-	os << output << "\n";
-	return os;
-}
-
 const std::map<std::string, command::ICommand *> COMMANDS{
 		{"load", new command::LoadCommand()},
 };

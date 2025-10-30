@@ -1,13 +1,5 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <map>
-#include <functional>
-#include <filesystem>
-#include <iostream>
-#include <random>
 #include <commands/command.hpp>
+#include <context/context.hpp>
 
 /**
  * Console process to parse commands
@@ -31,7 +23,7 @@ int main(int argc, char *argv[])
 	// 	return -1;
 	// }
 
-	command::Context context{};
+	context::Context context{};
 
 	for (;;)
 	{

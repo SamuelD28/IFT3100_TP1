@@ -1,5 +1,6 @@
 #pragma once
 
+#include <context/context.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -10,20 +11,6 @@
 
 namespace command
 {
-	struct Resource
-	{
-		int id{};
-		std::string type{};
-		std::string path{};
-	};
-
-	struct Context
-	{
-		std::vector<Resource> resources{};
-	};
-
-	std::ostream &operator<<(std::ostream &os, const Context *context);
-
 	struct TextCommand
 	{
 		bool valid{false};
@@ -36,8 +23,8 @@ namespace command
 
 	struct ICommand
 	{
-		virtual bool exec(Context *) const = 0;
-		virtual bool revert(Context *) const = 0;
+		virtual bool exec(context::Context *) const = 0;
+		virtual bool revert(context::Context *) const = 0;
 		virtual bool bind(TextCommand) = 0;
 	};
 
@@ -46,8 +33,8 @@ namespace command
 	struct LoadCommand : public ICommand
 	{
 		std::string path{};
-		bool exec(Context *) const override;
-		bool revert(Context *) const override;
+		bool exec(context::Context *) const override;
+		bool revert(context::Context *) const override;
 		bool bind(TextCommand) override;
 	};
 

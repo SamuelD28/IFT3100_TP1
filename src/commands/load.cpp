@@ -13,12 +13,12 @@ bool command::LoadCommand::bind(command::TextCommand command)
 	return true;
 };
 
-bool command::LoadCommand::revert(command::Context *context) const
+bool command::LoadCommand::revert(context::Context *context) const
 {
 	return true;
 };
 
-bool command::LoadCommand::exec(command::Context *context) const
+bool command::LoadCommand::exec(context::Context *context) const
 {
 	if (!std::filesystem::exists(path))
 	{
@@ -66,7 +66,7 @@ bool command::LoadCommand::exec(command::Context *context) const
 	std::uniform_int_distribution<> distrib(1, INT32_MAX);
 	int randomNumber = distrib(gen);
 
-	Resource resource{
+	context::Resource resource{
 			randomNumber,
 			"image",
 			destinationPath,
