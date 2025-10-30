@@ -1,5 +1,44 @@
 #include <commands/command.hpp>
 #include <context/context.hpp>
+#include <application.hpp>
+#include <thread>
+
+context::Context applicationContext{};
+
+void process(std::string input)
+{
+	auto textCommand = command::from(input);
+	std::cout << textCommand;
+
+	if (!textCommand.valid)
+	{
+		std::cout << "[ERROR] Text command is invalid, verify input\n";
+	}
+
+	auto command = command::build(textCommand);
+	if (command == nullptr)
+	{
+		std::cout << "[ERROR] Command is invalid, verify input\n";
+	}
+
+	if (!command->exec(&applicationContext))
+	{
+		std::cout << "[ERROR] Could not execute command, verify input\n";
+	}
+	std::cout << &applicationContext;
+}
+
+void processCinAsync()
+{
+	for (;;)
+	{
+		std::cin.clear();
+		std::string input = "";
+		std::getline(std::cin, input);
+		std::cout << input;
+		std::cout.flush();
+	}
+}
 
 /**
  * Console process to parse commands
@@ -15,44 +54,33 @@
  */
 int main(int argc, char *argv[])
 {
-	// auto window = application::setup("Labo 4", 800, 800);
-	// if (window == nullptr)
-	// {
-	// 	std::cout << "There was an error initializing the window";
-	// 	std::cout.flush();
-	// 	return -1;
-	// }
 
-	context::Context context{};
+	// Start console process in background
 
-	for (;;)
+	// Listen for input
+	// On input, parse and apply command
+	// Notify window of change
+	// Update
+
+	auto cin = std::thread(processCinAsync);
+	cin.detach();
+
+	auto window = application::setup("Labo 4", 800, 800);
+	if (window == nullptr)
 	{
-		std::cin.clear();
-		std::string input = "";
-		std::getline(std::cin, input);
-		auto textCommand = command::from(input);
-		std::cout << textCommand;
-
-		if (!textCommand.valid)
-		{
-			std::cout << "[ERROR] Text command is invalid, verify input\n";
-			continue;
-		}
-
-		auto command = command::build(textCommand);
-		if (command == nullptr)
-		{
-			std::cout << "[ERROR] Command is invalid, verify input\n";
-			continue;
-		}
-
-		if (!command->exec(&context))
-		{
-			std::cout << "[ERROR] Could not execute command, verify input\n";
-			continue;
-		}
-		std::cout << &context;
+		std::cout << "There was an error initializing the window";
+		std::cout.flush();
+		return -1;
 	}
 
+	while (!glfwWindowShouldClose(window))
+	{
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	std::cout << "Runned \n";
 	return 0;
 }
