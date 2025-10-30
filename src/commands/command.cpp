@@ -40,7 +40,7 @@ command::TextCommand command::from(std::string input)
 	return command;
 }
 
-std::ostream &operator<<(std::ostream &os, const command::TextCommand command)
+std::ostream &command::operator<<(std::ostream &os, const command::TextCommand command)
 {
 	std::string output = "[COMMAND] name => " + command.name + ", valid => " + (command.valid ? "true" : "false");
 
@@ -48,6 +48,19 @@ std::ostream &operator<<(std::ostream &os, const command::TextCommand command)
 	{
 		auto argument = command.arguments[i];
 		output += ", argument-" + std::to_string(i) + " => " + argument;
+	}
+
+	os << output << "\n";
+	return os;
+}
+
+std::ostream &command::operator<<(std::ostream &os, const command::Context *context)
+{
+	std::string output = "";
+
+	for (auto resource : context->resources)
+	{
+		output += "[RESOURCE] id => " + std::to_string(resource.id) + " type => " + resource.type + "\n";
 	}
 
 	os << output << "\n";
@@ -70,6 +83,6 @@ command::ICommand *command::build(command::TextCommand textCommand)
 	{
 		return nullptr;
 	}
-	
+
 	return command;
 }

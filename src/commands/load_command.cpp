@@ -22,6 +22,7 @@ bool command::LoadCommand::revert(command::Context *context) const
 bool command::LoadCommand::exec(command::Context *context) const
 {
 	std::cout << "exec command \n";
+	return true;
 	// if (!std::filesystem::exists(path))
 	// {
 	// 	std::cout << "[LOAD COMMAND] file is not open \n";

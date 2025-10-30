@@ -22,18 +22,7 @@ namespace command
 		std::vector<Resource> resources{};
 	};
 
-	std::ostream &operator<<(std::ostream &os, const Context *context)
-	{
-		std::string output = "";
-
-		for (auto resource : context->resources)
-		{
-			output += "[RESOURCE] id => " + std::to_string(resource.id) + " type => " + resource.type + "\n";
-		}
-
-		os << output << "\n";
-		return os;
-	}
+	std::ostream &operator<<(std::ostream &os, const Context *context);
 
 	struct TextCommand
 	{
@@ -42,6 +31,7 @@ namespace command
 		std::vector<std::string> arguments{};
 	};
 
+	std::ostream &operator<<(std::ostream &os, const command::TextCommand command);
 	TextCommand from(std::string input);
 
 	struct ICommand

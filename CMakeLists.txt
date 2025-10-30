@@ -29,5 +29,11 @@ target_sources(app PRIVATE
 	${CMAKE_SOURCE_DIR}/src/shader.cpp
 	${CMAKE_SOURCE_DIR}/src/shape.cpp
 	${CMAKE_SOURCE_DIR}/src/application.cpp
+
+	${CMAKE_SOURCE_DIR}/src/commands/command.cpp
+	${CMAKE_SOURCE_DIR}/src/commands/load_command.cpp
+	${CMAKE_SOURCE_DIR}/src/commands/quit_command.cpp
+	${CMAKE_SOURCE_DIR}/src/commands/palette_command.cpp
+	${CMAKE_SOURCE_DIR}/src/commands/snap_command.cpp
 )
 target_include_directories(app PRIVATE ${CMAKE_SOURCE_DIR}/src)

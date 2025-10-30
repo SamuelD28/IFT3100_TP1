@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 		std::string input = "";
 		std::getline(std::cin, input);
 		auto textCommand = command::from(input);
-		// std::cout << consoleCommand;
+		std::cout << textCommand;
 
 		if (!textCommand.valid)
 		{
