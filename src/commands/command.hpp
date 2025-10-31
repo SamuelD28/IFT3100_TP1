@@ -38,6 +38,19 @@ namespace command
 		bool bind(TextCommand) override;
 	};
 
+	// Could support multiple color schema (rgba, rgb, hsb)
+	struct PaletteCommand : public ICommand
+	{
+		float red = 0.0f;
+		float green = 0.0f;
+		float blue = 0.0f;
+		float alpha = 0.0f;
+
+		bool exec(context::Context *) const override;
+		bool revert(context::Context *) const override;
+		bool bind(TextCommand) override;
+	};
+
 	// struct QuitCommand
 	// {
 	// };
@@ -46,7 +59,4 @@ namespace command
 	// {
 	// };
 
-	// struct PaletteCommand
-	// {
-	// };
 };

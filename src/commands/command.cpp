@@ -56,6 +56,7 @@ std::ostream &command::operator<<(std::ostream &os, const command::TextCommand c
 
 const std::map<std::string, command::ICommand *> COMMANDS{
 		{"load", new command::LoadCommand()},
+		{"palette", new command::PaletteCommand()},
 };
 
 command::ICommand *command::build(command::TextCommand textCommand)
@@ -68,7 +69,6 @@ command::ICommand *command::build(command::TextCommand textCommand)
 	auto command = COMMANDS.at(textCommand.name);
 	if (!command->bind(textCommand))
 	{
-		std::cout << "Doenst bind \n";
 		return nullptr;
 	}
 

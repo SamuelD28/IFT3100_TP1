@@ -2,13 +2,11 @@
 
 std::ostream &context::operator<<(std::ostream &os, const context::Context *context)
 {
-	std::string output = "";
-
 	for (auto resource : context->resources)
 	{
-		output += "[RESOURCE] id => " + std::to_string(resource.id) + " type => " + resource.type + "\n";
+		std::cout << "[RESOURCE] id => " + std::to_string(resource.id) + " type => " + resource.type + "\n";
 	}
 
-	os << output << "\n";
+	os << "[COLOR] red => " << context->red << " green => " << context->green << " blue => " << context->blue << " alpha => " << context->alpha << "\n";
 	return os;
 }

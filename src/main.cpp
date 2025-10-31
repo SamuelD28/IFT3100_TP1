@@ -5,38 +5,34 @@
 
 context::Context applicationContext{};
 
-void process(std::string input)
-{
-	auto textCommand = command::from(input);
-	std::cout << textCommand;
-
-	if (!textCommand.valid)
-	{
-		std::cout << "[ERROR] Text command is invalid, verify input\n";
-	}
-
-	auto command = command::build(textCommand);
-	if (command == nullptr)
-	{
-		std::cout << "[ERROR] Command is invalid, verify input\n";
-	}
-
-	if (!command->exec(&applicationContext))
-	{
-		std::cout << "[ERROR] Could not execute command, verify input\n";
-	}
-	std::cout << &applicationContext;
-}
-
-void processCinAsync()
+void processCommand()
 {
 	for (;;)
 	{
 		std::cin.clear();
 		std::string input = "";
 		std::getline(std::cin, input);
-		std::cout << input;
 		std::cout.flush();
+
+		auto textCommand = command::from(input);
+		std::cout << textCommand;
+
+		if (!textCommand.valid)
+		{
+			std::cout << "[ERROR] Text command is invalid, verify input\n";
+		}
+
+		auto command = command::build(textCommand);
+		if (command == nullptr)
+		{
+			std::cout << "[ERROR] Command is invalid, verify input\n";
+		}
+
+		if (!command->exec(&applicationContext))
+		{
+			std::cout << "[ERROR] Could not execute command, verify input\n";
+		}
+		std::cout << &applicationContext;
 	}
 }
 
@@ -54,15 +50,7 @@ void processCinAsync()
  */
 int main(int argc, char *argv[])
 {
-
-	// Start console process in background
-
-	// Listen for input
-	// On input, parse and apply command
-	// Notify window of change
-	// Update
-
-	auto cin = std::thread(processCinAsync);
+	auto cin = std::thread(processCommand);
 	cin.detach();
 
 	auto window = application::setup("Labo 4", 800, 800);
@@ -75,7 +63,7 @@ int main(int argc, char *argv[])
 
 	while (!glfwWindowShouldClose(window))
 	{
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(applicationContext.red, applicationContext.green, applicationContext.blue, applicationContext.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
