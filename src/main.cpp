@@ -47,6 +47,10 @@ void processCommand()
  * Snap : Export current framebuffer for a given period
  * palette : create a color palette that can be reused
  *
+ * TODO
+ * - Serialize context so we can reload the information when starting the app
+ * - better error handling troughout the commands
+ * - display different metrics about the app (fps, memory used, allocations, etc...)
  */
 int main(int argc, char *argv[])
 {

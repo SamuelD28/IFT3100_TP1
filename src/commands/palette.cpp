@@ -34,27 +34,21 @@ bool command::PaletteCommand::bind(TextCommand textCommand)
 		return false;
 	}
 
-	this->red = colorComponents.at(0);
-	this->green = colorComponents.at(1);
-	this->blue = colorComponents.at(2);
-	this->alpha = colorComponents.at(3);
+	this->color.red = colorComponents.at(0);
+	this->color.green = colorComponents.at(1);
+	this->color.blue = colorComponents.at(2);
+	this->color.alpha = colorComponents.at(3);
 	return true;
 }
 
 bool command::PaletteCommand::exec(context::Context *context) const
 {
-	context->alpha = this->alpha;
-	context->red = this->red;
-	context->green = this->green;
-	context->blue = this->blue;
+	context->background = this->color;
 	return true;
 }
 
 bool command::PaletteCommand::revert(context::Context *context) const
 {
-	context->alpha = 0.0f;
-	context->red = 0.0f;
-	context->green = 0.0f;
-	context->blue = this->blue;
+	context->background = color::RGBA{};
 	return true;
 }

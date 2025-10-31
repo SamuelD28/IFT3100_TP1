@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <color.hpp>
 
 namespace context
 {
@@ -15,11 +16,7 @@ namespace context
 	struct Context
 	{
 		std::vector<Resource> resources{};
-
-		float red = 0.0f;
-		float green = 0.0f;
-		float blue = 0.0f;
-		float alpha = 0.0f;
+		color::RGBA background{};
 	};
 
 	std::ostream &operator<<(std::ostream &os, const Context *context);

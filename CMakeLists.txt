@@ -37,5 +37,6 @@ target_sources(app PRIVATE
 	${CMAKE_SOURCE_DIR}/src/commands/snap.cpp
 
 	${CMAKE_SOURCE_DIR}/src/context/context.cpp
+	${CMAKE_SOURCE_DIR}/src/color.cpp
 )
 target_include_directories(app PRIVATE ${CMAKE_SOURCE_DIR}/src)
