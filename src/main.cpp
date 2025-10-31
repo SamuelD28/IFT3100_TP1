@@ -3,10 +3,12 @@
 #include <application.hpp>
 #include <thread>
 
-context::Context applicationContext{};
+auto applicationContext = context::Context::deserialize();
 
 void processCommand()
 {
+	std::cout << &applicationContext << std::endl;
+
 	for (;;)
 	{
 		std::cin.clear();
@@ -32,7 +34,9 @@ void processCommand()
 		{
 			std::cout << "[ERROR] Could not execute command, verify input\n";
 		}
+
 		std::cout << &applicationContext;
+		applicationContext.serialize();
 	}
 }
 
@@ -67,12 +71,15 @@ int main(int argc, char *argv[])
 
 	while (!glfwWindowShouldClose(window))
 	{
-		glClearColor(applicationContext.red, applicationContext.green, applicationContext.blue, applicationContext.alpha);
+		glClearColor(
+				applicationContext.background.red,
+				applicationContext.background.green,
+				applicationContext.background.blue,
+				applicationContext.background.alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	std::cout << "Runned \n";
 	return 0;
 }

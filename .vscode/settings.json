@@ -53,6 +53,11 @@
 		"map": "cpp",
 		"codecvt": "cpp",
 		"ratio": "cpp",
-		"ranges": "cpp"
+		"ranges": "cpp",
+		"semaphore": "cpp",
+		"span": "cpp",
+		"stop_token": "cpp",
+		"thread": "cpp",
+		"variant": "cpp"
 	}
 }
