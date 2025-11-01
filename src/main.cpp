@@ -22,17 +22,20 @@ void processCommand()
 		if (!textCommand.valid)
 		{
 			std::cout << "[ERROR] Text command is invalid, verify input\n";
+			continue;
 		}
 
 		auto command = command::build(textCommand);
 		if (command == nullptr)
 		{
 			std::cout << "[ERROR] Command is invalid, verify input\n";
+			continue;
 		}
 
 		if (!command->exec(&applicationContext))
 		{
 			std::cout << "[ERROR] Could not execute command, verify input\n";
+			continue;
 		}
 
 		std::cout << &applicationContext;

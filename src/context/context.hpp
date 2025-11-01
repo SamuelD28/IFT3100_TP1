@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <color.hpp>
+#include <filesystem>
 
 namespace context
 {
